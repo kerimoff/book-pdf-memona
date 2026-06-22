@@ -1,0 +1,65 @@
+{
+  "book": {
+    "title": "Xatirə Kitabı",
+    "subtitle": "Ailə hekayələri",
+    "author": "Simurq",
+    "language": "az",
+    "brand": "simurq"
+  },
+  "style": {
+    "page_size": "B5",
+    "font_name": "libre-baskerville",
+    "margins_mm": {
+      "inside": 24,
+      "outside": 20,
+      "top": 20,
+      "bottom": 22
+    },
+    "body_font_size": 11,
+    "title_font_size": 21,
+    "line_height": 1.55,
+    "show_page_numbers": true,
+    "qr_color": "#1A5C52",
+    "qr_logo_enabled": true,
+    "qr_code_size": 60,
+    "qr_top_spacing": 10,
+    "title_spacing": 35,
+    "date_spacing": 10,
+    "divider_spacing": 14,
+    "story_top_spacing": 40,
+    "divider_line_width": 0.5,
+    "divider_style": "simple-line",
+    "image_border_width": 0.5,
+    "image_border_color": "#BFBFBF",
+    "image_border_padding": 4,
+    "date_color": "#737373",
+    "divider_color": "#B3B3B3",
+    "page_number_color": "#666666",
+    "date_font_size": 10,
+    "page_number_font_size": 9
+  },
+  "stories": [
+    {
+      "title": "Babamın hekayəsi",
+      "body": "Bu hekayə babamın uşaqlıq illərindən bəhs edir. O, kiçik bir kənddə böyümüşdü, hər səhər erkən qalxıb tarlanı sulayardı. Həyat sadə idi, amma xoşbəxt idi.\nBabam deyirdi ki, o vaxtlar televizor yox idi, radio da çətin tapılırdı. Axşamlar hamı bir yerə yığılıb nağıl danışardı. Ən çox sevdiyi nağıl Koroğlu haqqında idi.\nO, məktəbə piyada gedirdi — hər gün beş kilometr yol. Qışda qar dizə qədər olurdu, amma heç vaxt dərsi buraxmazdı. Müəllimləri onu çox sevirdi, çünki həmişə hazırlıqlı gəlirdi.\nBabamın ən yaxın dostu Əli idi. Onlar birlikdə balıq tutar, çayda üzər, meyvə bağlarında oynayardılar. Dostluqları ömürlük oldu — ta ki Əli başqa şəhərə köçənə qədər.\nİndi babam o günləri xatırlayanda gözləri dolur. Deyir ki, o vaxtlar pul yox idi, amma sevgi və hörmət var idi. Və bunlar həyatın ən qiymətli şeyləridir.",
+      "recorded_at": "2026-03-09T10:00:00.000Z",
+      "qr_target_url": "https://simurq.app/listen/story-001"
+    },
+    {
+      "title": "Anamın mətbəxi",
+      "body": "Anamın mətbəxi həmişə isti və xoş qoxulu olardı. Hər bayram üçün xüsusi yeməklər hazırlayardı — plov, dolma, qutab və şəkərbura.\nO, bütün reseptləri nənəsindən öyrənmişdi. Heç bir kitab və ya internet yox idi, hər şey ağızdan-ağıza ötürülürdü. Anam deyirdi ki, yeməyin dadı sevgi ilə gəlir.\nBayram süfrəsi həmişə zəngin olardı. Qonşular, qohumlar hamısı gəlirdi. Uşaqlar həyətdə oynayar, böyüklər isə çay içə-içə söhbət edərdilər.\nAnamın ən məşhur yeməyi onun plovuydu. Düyünü saatlarla isladıb, yavaş-yavaş bişirərdi. Hər dənə ayrı-ayrı olardı, üstünə qızardılmış soğan və kişmiş qoyardı.\nBu xatirələr mənim üçün çox qiymətlidir. Hər dəfə plov bişirəndə anamı xatırlayıram və onun mətbəxinin istisini hiss edirəm.",
+      "recorded_at": "2026-02-14T15:30:00.000Z",
+      "qr_target_url": "https://simurq.app/listen/story-002",
+      "image_url": "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80"
+    },
+    {
+      "title": "İlk məktəb günüm",
+      "body": "Sentyabrın birinci günü idi. Mən çox həyəcanlı idim — ilk dəfə məktəbə gedirdim. Anam mənə yeni forma almışdı, ağ köynək və qara şalvar.\nƏlimdə gül dəstəsi var idi, çantamda yeni dəftərlər və rəngli karandaşlar. Yolda başqa uşaqları da gördüm — onlar da mənim kimi həyəcanlı idilər.\nMəktəbin həyətində xətt qurulanda ürəyim güclü döyünürdü. Direktor çıxış etdi, sonra zəng çaldı və biz siniflərə daxil olduq.\nBirinci müəllimim Sevil müəllimə idi. O, çox mehriban idi və bizə əlifbanı öyrətməyə başladı. İlk öyrəndiyim hərf 'A' idi.\nO gün evə qayıdanda çox xoşbəxt idim. Anam mənə tort almışdı və biz bütün ailə ilə birlikdə qeyd etdik.",
+      "recorded_at": "2025-09-01T08:00:00.000Z",
+      "qr_target_url": "https://simurq.app/listen/story-003"
+    }
+  ],
+  "output": {
+    "file_name": "simurq-book.pdf"
+  }
+}
