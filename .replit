@@ -56,3 +56,4 @@ defaultBucketID = "replit-objstore-0f5d5528-aed6-4ae5-b81b-0da93efe2c34"
 
 [agent]
 stack = "FULLSTACK_JS"
+expertMode = true
