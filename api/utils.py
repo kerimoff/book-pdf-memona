@@ -84,8 +84,54 @@ def _apply_svg_matrix(x: float, y: float, matrix: tuple) -> tuple:
 _SVG_SKIP_TAGS = {'defs', 'clipPath', 'mask', 'symbol', 'linearGradient', 'radialGradient', 'pattern', 'filter'}
 
 
-def _collect_svg_paths(elem, accumulated=(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)) -> list:
-    """Recursively collect (path_d, matrix) for drawable path elements (skips defs/clipPaths)."""
+def _build_clip_defs(root) -> dict:
+    """Return {clip_id: path_d} for all <clipPath> elements in <defs>."""
+    defs = {}
+    for elem in root.iter():
+        tag = elem.tag.split('}')[-1] if '}' in elem.tag else elem.tag
+        if tag == 'clipPath':
+            clip_id = elem.get('id', '')
+            for child in elem.iter():
+                ctag = child.tag.split('}')[-1] if '}' in child.tag else child.tag
+                if ctag == 'path':
+                    d = child.get('d', '')
+                    if d and clip_id:
+                        defs[clip_id] = d
+                        break
+    return defs
+
+
+def _svg_path_is_curved(path_d: str) -> bool:
+    """True if the path contains any curves (Bezier / arc), i.e. it is not a plain polygon."""
+    return any(c in path_d for c in ('C', 'c', 'S', 's', 'Q', 'q', 'A', 'a'))
+
+
+def _leaf_fill(elem) -> str | None:
+    """Return the first explicit #rrggbb fill found on any descendant <path>."""
+    tag = elem.tag.split('}')[-1] if '}' in elem.tag else elem.tag
+    if tag == 'path':
+        f = elem.get('fill', '')
+        if f and f != 'none' and f.startswith('#'):
+            return f
+    for child in elem:
+        result = _leaf_fill(child)
+        if result:
+            return result
+    return None
+
+
+def _collect_svg_paths(elem, accumulated=(1.0, 0.0, 0.0, 1.0, 0.0, 0.0),
+                       clip_defs: dict | None = None) -> list:
+    """Recursively collect (path_d, matrix, fill_override_or_None).
+
+    fill_override_or_None:
+        None  — render with the theme colour passed to draw_svg_logo_vector
+        str   — render with this specific hex colour (e.g. '#ff5757' for the heart)
+
+    When a <g clip-path="url(#id)"> references a *curved* clip shape AND its
+    descendant <path> has an explicit fill, we draw the clip shape directly
+    with that fill colour (instead of drawing the clipped rectangle as a square).
+    """
     results = []
     tag = elem.tag.split('}')[-1] if '}' in elem.tag else elem.tag
 
@@ -93,18 +139,27 @@ def _collect_svg_paths(elem, accumulated=(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)) -> list
         return results
 
     transform_str = elem.get('transform', '')
-    if transform_str:
-        current = _compose_matrices(accumulated, _parse_svg_transform(transform_str))
-    else:
-        current = accumulated
+    current = _compose_matrices(accumulated, _parse_svg_transform(transform_str)) if transform_str else accumulated
+
+    # Handle clip-path references: if the clip shape is curved and the child
+    # has an explicit fill colour, draw the clip shape rather than the rect.
+    clip_ref = elem.get('clip-path', '')
+    if clip_ref and clip_defs is not None:
+        clip_id = clip_ref.replace('url(#', '').rstrip(')')
+        clip_d = clip_defs.get(clip_id, '')
+        if clip_d and _svg_path_is_curved(clip_d):
+            fill = _leaf_fill(elem)
+            if fill:
+                results.append((clip_d, current, fill))
+                return results   # don't recurse — the clip IS the visual shape
 
     if tag == 'path':
         d = elem.get('d', '')
         if d:
-            results.append((d, current))
+            results.append((d, current, None))
 
     for child in elem:
-        results.extend(_collect_svg_paths(child, current))
+        results.extend(_collect_svg_paths(child, current, clip_defs))
 
     return results
 
@@ -165,7 +220,8 @@ def draw_svg_logo_vector(
     vb_w, vb_h = vb[2] - vb[0], vb[3] - vb[1]
     scale = size / max(vb_w, vb_h)
 
-    paths = _collect_svg_paths(root)
+    clip_defs = _build_clip_defs(root)
+    paths = _collect_svg_paths(root, clip_defs=clip_defs)
     if not paths:
         return
 
@@ -173,11 +229,18 @@ def draw_svg_logo_vector(
         tx, ty = _apply_svg_matrix(px, py, matrix)
         return (x + (tx - vb[0]) * scale, y + size - (ty - vb[1]) * scale)
 
-    r, g, b = _hex_to_rgb(color_hex)
+    theme_r, theme_g, theme_b = _hex_to_rgb(color_hex)
     canvas_obj.saveState()
-    canvas_obj.setFillColorRGB(r / 255, g / 255, b / 255)
+    canvas_obj.setFillColorRGB(theme_r / 255, theme_g / 255, theme_b / 255)
+    current_fill = color_hex  # track which fill is currently set on the canvas
 
-    for d, matrix in paths:
+    for d, matrix, fill_override in paths:
+        # Switch fill colour when a path has its own explicit colour (e.g. the heart)
+        target_fill = fill_override if fill_override else color_hex
+        if target_fill != current_fill:
+            fr, fg, fb = _hex_to_rgb(target_fill)
+            canvas_obj.setFillColorRGB(fr / 255, fg / 255, fb / 255)
+            current_fill = target_fill
         p = canvas_obj.beginPath()
         cur_x, cur_y = 0.0, 0.0
 

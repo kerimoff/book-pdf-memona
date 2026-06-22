@@ -34,6 +34,7 @@ from api.utils import (
 logger = logging.getLogger(__name__)
 
 FONTS_REGISTERED = False
+COLLAGE_GUTTER = 4 * mm  # gap between photos in a multi-photo collage
 
 
 def register_fonts():
@@ -161,12 +162,12 @@ class SimurqPDFGenerator:
             story = stories[i]
             if (
                 self.style.allow_reorder
-                and story.image_url
+                and story.image_urls
                 and self.page_num % 2 == 0
             ):
                 limit = self.style.allow_reorder_count or len(stories)
                 for j in range(i + 1, min(i + 1 + limit, len(stories))):
-                    if j not in rendered and not stories[j].image_url:
+                    if j not in rendered and not stories[j].image_urls:
                         logger.info(
                             f"Reordering: drawing story {j + 1} ('{stories[j].title}') "
                             f"before story {i + 1} ('{story.title}') to avoid filler page"
@@ -264,12 +265,13 @@ class SimurqPDFGenerator:
             self.c.setFillColorRGB(0, 0, 0)
 
     def _draw_story(self, story: Story):
-        has_image = story.image_url is not None and story.image_url.strip() != ""
-
-        if has_image:
+        n = len(story.image_urls)
+        if n == 0:
+            self._draw_text_story(story)
+        elif n == 1:
             self._draw_image_story(story)
         else:
-            self._draw_text_story(story)
+            self._draw_multi_image_story(story)
         self._first_story_done = True
 
     def _draw_image_story(self, story: Story):
@@ -328,6 +330,404 @@ class SimurqPDFGenerator:
             self._draw_body_text(remaining, box["top"])
             self._draw_page_number()
 
+
+    # ── Multi-photo layout ────────────────────────────────────────────
+
+    def _draw_multi_image_story(self, story: Story):
+        """Handle stories with 2 or 3 photos."""
+        images = [fetch_image(url) for url in story.image_urls]
+        images = [img for img in images if img is not None]
+
+        if len(images) == 0:
+            self._draw_text_story(story)
+            return
+        if len(images) == 1:
+            self._draw_image_story(story)
+            return
+
+        def is_landscape(img): return img.size[0] / img.size[1] > 1.33
+        landscape = [img for img in images if is_landscape(img)]
+        others    = [img for img in images if not is_landscape(img)]
+
+        # Exactly 1 landscape + at least 1 other: landscape goes inline on the
+        # text page (mirrors the existing single-landscape inline behaviour);
+        # the remaining portrait/square images form a collage on the left page.
+        if len(landscape) == 1 and len(others) >= 1:
+            self._draw_landscape_inline_with_collage(story, landscape[0], others)
+            return
+
+        # 3 photos with long text → split [photo 1] / [photos 2+3]
+        if len(images) == 3 and self._is_long_text(story):
+            self._draw_3photo_split_story(story, images)
+        else:
+            self._draw_collage_spread_story(story, images)
+
+    def _draw_collage_spread_story(self, story: Story, images: list):
+        """All photos as a collage on left page, text on right page (same spread)."""
+        if self.page_num % 2 == 0:
+            # Next page would be odd (right). Need even (left) for the collage.
+            if self._is_long_text(story):
+                self._draw_collage_sandwich(story, images)
+            else:
+                self._draw_filler_page()
+                self._draw_collage_and_text(story, images)
+        else:
+            self._draw_collage_and_text(story, images)
+
+    def _draw_collage_and_text(self, story: Story, images: list):
+        """Collage on even/left page, opener+text on odd/right page."""
+        self._new_page(count_as_logical=True)   # even (left) — collage
+        self._draw_photo_collage(images)
+
+        self._new_page(count_as_logical=True)   # odd (right) — text
+        y_cursor = self._draw_opener_block(story)
+        self._draw_body_text(story.body, y_cursor)
+        self._draw_page_number()
+
+    def _draw_landscape_inline_with_collage(self, story: Story,
+                                            landscape_img: Image.Image,
+                                            other_imgs: list):
+        """Portrait/square images as collage on left page; landscape image inline
+        on the text page alongside QR, title and body — mirrors the existing
+        single-landscape inline behaviour for multi-photo stories."""
+        # Ensure collage lands on even (left) page
+        if self.page_num % 2 == 0:
+            self._draw_filler_page()
+
+        self._new_page(count_as_logical=True)   # even (left) — collage of non-landscape
+        self._draw_photo_collage(other_imgs)
+
+        self._new_page(count_as_logical=True)   # odd (right) — opener + landscape inline + text
+        y_cursor = self._draw_opener_block(story)
+
+        # Draw the landscape image inline (full content width, capped at 55% of content height)
+        box = self._get_content_box()
+        img_w, img_h = landscape_img.size
+        draw_w = box["width"]
+        draw_h = img_h * (draw_w / img_w)
+        max_h = box["height"] * 0.55
+        if draw_h > max_h:
+            draw_h = max_h
+            draw_w = img_w * (draw_h / img_h)
+
+        if y_cursor - draw_h < box["bottom"]:
+            self._draw_page_number()
+            self._new_page(count_as_logical=True)
+            box = self._get_content_box()
+            y_cursor = box["top"]
+
+        x = box["left"] + (box["width"] - draw_w) / 2
+        y = y_cursor - draw_h
+
+        if self.image_border_width > 0:
+            bp = self.image_border_padding
+            self.c.setStrokeColorRGB(*self.image_border_color)
+            self.c.setLineWidth(self.image_border_width)
+            self.c.rect(x - bp, y - bp, draw_w + bp * 2, draw_h + bp * 2, stroke=1, fill=0)
+
+        img_buf = pil_image_to_reportlab(landscape_img)
+        self.c.drawImage(ImageReader(img_buf), x, y, draw_w, draw_h, preserveAspectRatio=True)
+
+        y_cursor = y - self.story_top_spacing
+        self._draw_body_text(story.body, y_cursor)
+        self._draw_page_number()
+
+    def _draw_collage_sandwich(self, story: Story, images: list):
+        """Text opener on odd/right → collage on even/left → continuation on odd/right."""
+        self._new_page(count_as_logical=True)   # odd (right) — opener + partial text
+        y_cursor = self._draw_opener_block(story)
+        remaining, _ = self._draw_body_text_partial(story.body, y_cursor)
+        self._draw_page_number()
+
+        self._new_page(count_as_logical=True)   # even (left) — collage
+        self._draw_photo_collage(images)
+
+        if remaining:
+            self._new_page(count_as_logical=True)   # odd (right) — continuation
+            box = self._get_content_box()
+            self._draw_body_text(remaining, box["top"])
+            self._draw_page_number()
+
+    def _draw_3photo_split_story(self, story: Story, images: list):
+        """Split: photo 1 on left spread 1, photos 2+3 on left spread 2.
+        Constraint: each collage page pairs only with this story's text."""
+        group_a = [images[0]]
+        group_b = images[1:]
+
+        # Ensure collage A lands on even (left) page
+        if self.page_num % 2 == 0:
+            self._draw_filler_page()
+
+        self._new_page(count_as_logical=True)   # even (left) — photo 1
+        self._draw_photo_collage(group_a)
+
+        self._new_page(count_as_logical=True)   # odd (right) — opener + text part 1
+        y_cursor = self._draw_opener_block(story)
+        remaining, _ = self._draw_body_text_partial(story.body, y_cursor)
+        self._draw_page_number()
+
+        # After even+odd pair, page_num is odd → next is even (left). No filler needed.
+        self._new_page(count_as_logical=True)   # even (left) — photos 2+3
+        self._draw_photo_collage(group_b)
+
+        if remaining:
+            self._new_page(count_as_logical=True)   # odd (right) — continuation
+            box = self._get_content_box()
+            self._draw_body_text(remaining, box["top"])
+            self._draw_page_number()
+
+    def _plan_collage(self, images: list) -> tuple[str, list]:
+        """Choose layout template and reorder images for best visual fit.
+        Templates:
+          '1-single'      — single image centred
+          '2-vstack'      — side by side (A left | B right)
+          '2-hstack'      — stacked (A top / B bottom)
+          '3-hstack'      — all 3 stacked vertically (top / mid / bottom)
+          '3-left-tall'   — A left tall, B top-right, C bottom-right
+          '3-top-spread'  — A top spanning, B bottom-left, C bottom-right
+        Selection maximises the minimum image dimension across the collage.
+        """
+        def aspect(img): return img.size[0] / img.size[1]
+
+        n = len(images)
+        if n == 1:
+            return '1-single', images
+        if n == 2:
+            r0, r1 = aspect(images[0]), aspect(images[1])
+            # hstack when any image is landscape, OR when both are square-ish
+            # (product > 0.5 means neither is tall-portrait; hstack gives ~50% bigger images)
+            if r0 > 1.33 or r1 > 1.33 or r0 * r1 > 0.5:
+                return '2-hstack', images
+            return '2-vstack', sorted(images, key=aspect)   # both tall-portrait → side by side
+        # n == 3: sort ascending (most portrait first)
+        ranked = sorted(images, key=aspect)
+        n_landscape = sum(1 for img in images if aspect(img) > 1.33)
+        min_ratio = aspect(ranked[0])  # most portrait image's ratio
+
+        if n_landscape == 3:
+            # All landscape → stacking vertically gives each image ~2× more height
+            # than 3-top-spread (which makes the bottom two tiny)
+            return '3-hstack', list(reversed(ranked))   # widest on top
+
+        if n_landscape >= 1:
+            # Any landscape image goes on top spanning full width;
+            # remaining images fill the bottom row at their natural heights.
+            # This beats 3-left-tall for 1L+2P by up to 2.4×.
+            return '3-top-spread', list(reversed(ranked))
+
+        # 0 landscape: all portrait / square
+        if min_ratio > 0.75:
+            # Square-ish images → stacking gives 50% more height than 3-left-tall
+            return '3-hstack', list(reversed(ranked))
+
+        # Very tall portraits (9:16 etc.) — 3-left-tall keeps the left portrait
+        # at nearly full-page height, which beats stacking
+        return '3-left-tall', ranked
+
+    def _compute_collage_layout(self, images: list, template: str,
+                                x0: float, y0: float, W: float, H: float
+                                ) -> tuple[list, list]:
+        """Return (positions, sep_lines).
+        positions — [(x, y, w, h) ...] one per image (ReportLab bottom-left origin).
+        sep_lines — [(x1, y1, x2, y2) ...] thin divider lines between images.
+        For 2-hstack / 2-vstack images are sized adaptively (no letterbox within the group).
+        For 3-slot templates images are fit-within-slot with letterbox, but share one border.
+        """
+        SEP = 1.0  # points — thin gap / divider line between images
+
+        def ratio(img):
+            return img.size[0] / img.size[1]
+
+        def fit_in_slot(img, sw, sh):
+            """Fit image inside slot (sw×sh), centred. Returns offset (ox,oy) and size (dw,dh)."""
+            iw, ih = img.size
+            scale = min(sw / iw, sh / ih)
+            dw, dh = iw * scale, ih * scale
+            return (sw - dw) / 2, (sh - dh) / 2, dw, dh
+
+        if template == '1-single':
+            ox, oy, dw, dh = fit_in_slot(images[0], W, H)
+            return [(x0 + ox, y0 + oy, dw, dh)], []
+
+        if template == '2-hstack':
+            r0, r1 = ratio(images[0]), ratio(images[1])
+            # Each image fills the full width; height is determined by ratio.
+            h0 = W / r0
+            h1 = W / r1
+            total_h = h0 + SEP + h1
+            if total_h > H:
+                # Solve: w/r0 + SEP + w/r1 = H  →  w = (H-SEP)/(1/r0+1/r1)
+                w = (H - SEP) / (1 / r0 + 1 / r1)
+                h0, h1 = w / r0, w / r1
+                total_h = h0 + SEP + h1
+            else:
+                w = W
+            cx = x0 + (W - w) / 2
+            cy = y0 + (H - total_h) / 2  # centre group vertically
+            pos = [
+                (cx, cy + h1 + SEP, w, h0),   # top image
+                (cx, cy, w, h1),               # bottom image
+            ]
+            sep_y = cy + h1 + SEP / 2
+            sep_lines = [(cx, sep_y, cx + w, sep_y)]
+            return pos, sep_lines
+
+        if template == '2-vstack':
+            r0, r1 = ratio(images[0]), ratio(images[1])
+            # Each image fills the full height; width is determined by ratio.
+            w0 = H * r0
+            w1 = H * r1
+            total_w = w0 + SEP + w1
+            if total_w > W:
+                # Solve: h*r0 + SEP + h*r1 = W  →  h = (W-SEP)/(r0+r1)
+                h = (W - SEP) / (r0 + r1)
+                w0, w1 = h * r0, h * r1
+                total_w = w0 + SEP + w1
+            else:
+                h = H
+            cy = y0 + (H - h) / 2
+            cx = x0 + (W - total_w) / 2  # centre group horizontally
+            pos = [
+                (cx, cy, w0, h),                # left image
+                (cx + w0 + SEP, cy, w1, h),     # right image
+            ]
+            sep_x = cx + w0 + SEP / 2
+            sep_lines = [(sep_x, cy, sep_x, cy + h)]
+            return pos, sep_lines
+
+        if template == '3-hstack':
+            r0, r1, r2 = ratio(images[0]), ratio(images[1]), ratio(images[2])
+            # Each image fills the full width, heights determined by ratio
+            h0 = W / r0
+            h1 = W / r1
+            h2 = W / r2
+            total_h = h0 + SEP + h1 + SEP + h2
+            if total_h > H:
+                # Scale: w*(1/r0+1/r1+1/r2) + 2*SEP = H
+                w = (H - 2 * SEP) / (1 / r0 + 1 / r1 + 1 / r2)
+                h0, h1, h2 = w / r0, w / r1, w / r2
+                total_h = h0 + SEP + h1 + SEP + h2
+            else:
+                w = W
+            cx = x0 + (W - w) / 2
+            cy = y0 + (H - total_h) / 2
+            pos = [
+                (cx, cy + h2 + SEP + h1 + SEP, w, h0),  # top
+                (cx, cy + h2 + SEP, w, h1),              # middle
+                (cx, cy, w, h2),                          # bottom
+            ]
+            sep_lines = [
+                (cx, cy + h2 + SEP / 2, cx + w, cy + h2 + SEP / 2),
+                (cx, cy + h2 + SEP + h1 + SEP / 2, cx + w, cy + h2 + SEP + h1 + SEP / 2),
+            ]
+            return pos, sep_lines
+
+        # ── 3-slot templates: solve for a perfect outer rectangle, no letterbox ──
+        #
+        # 3-left-tall: solve h so that left_w = h*r0 and right pair fills h exactly.
+        #   Constraint: left_w + SEP + right_w = W  and  right_w*(1/r1+1/r2)+SEP = h
+        #   → h = ((W-SEP)*(1/r1+1/r2) + SEP) / (1 + r0*(1/r1+1/r2))
+        #
+        # 3-top-spread: bottom pair fills W exactly, top image fills W at natural ratio.
+        #   h_bot = (W-SEP)/(r1+r2),  h_top = W/r0
+        #   → collage h = h_top + SEP + h_bot
+
+        if template == '3-top-spread':
+            r0, r1, r2 = ratio(images[0]), ratio(images[1]), ratio(images[2])
+            h_top = W / r0           # top image fills full width
+            h_bot = (W - SEP) / (r1 + r2)   # bottom pair fills full width
+            w1 = h_bot * r1
+            w2 = h_bot * r2
+            h = h_top + SEP + h_bot
+
+            if h > H:
+                # Scale the whole group to fit content height
+                s = H / h
+                h_top *= s; h_bot *= s; w1 *= s; w2 *= s
+                h = H
+
+            # Group may be narrower than W after scaling (w1+SEP+w2 ≈ W*s)
+            w_group = w1 + SEP + w2
+            w_top = h_top * r0   # natural width of top image at scaled height
+            cx = x0 + (W - max(w_top, w_group)) / 2   # centre group horizontally
+            cy = y0 + (H - h) / 2
+
+            top_y = cy + h_bot + SEP
+            pos = [
+                (cx, top_y, w_top, h_top),              # top spanning
+                (cx, cy, w1, h_bot),                    # bottom left
+                (cx + w1 + SEP, cy, w2, h_bot),         # bottom right
+            ]
+            sep_lines = [
+                (cx, top_y - SEP / 2, cx + w_top, top_y - SEP / 2),
+                (cx + w1 + SEP / 2, cy, cx + w1 + SEP / 2, top_y),
+            ]
+            return pos, sep_lines
+
+        # '3-left-tall'
+        r0, r1, r2 = ratio(images[0]), ratio(images[1]), ratio(images[2])
+        A = 1 / r1 + 1 / r2
+        h = ((W - SEP) * A + SEP) / (1 + r0 * A)
+        left_w = h * r0
+        right_w = W - SEP - left_w
+
+        if h > H:
+            s = H / h
+            h = H
+            left_w *= s
+            right_w *= s
+
+        h1 = right_w / r1   # right top
+        h2 = right_w / r2   # right bottom
+        cy = y0 + (H - h) / 2
+        right_x = x0 + left_w + SEP
+
+        pos = [
+            (x0, cy, left_w, h),                          # left: fills full height
+            (right_x, cy + h2 + SEP, right_w, h1),       # right top
+            (right_x, cy, right_w, h2),                   # right bottom
+        ]
+        sep_lines = [
+            (x0 + left_w + SEP / 2, cy, x0 + left_w + SEP / 2, cy + h),
+            (right_x, cy + h2 + SEP / 2, right_x + right_w, cy + h2 + SEP / 2),
+        ]
+        return pos, sep_lines
+
+    def _draw_photo_collage(self, images: list):
+        """Draw a collage of 1–3 images on the current page.
+        One shared border around the entire group; thin separator lines between images."""
+        if not images:
+            return
+        template, ordered = self._plan_collage(images)
+        box = self._get_content_box()
+        bp = self.image_border_padding
+
+        positions, sep_lines = self._compute_collage_layout(
+            ordered, template,
+            box["left"] + bp, box["bottom"] + bp,
+            box["width"] - bp * 2, box["height"] - bp * 2,
+        )
+
+        # Bounding box of all image positions
+        gx = min(p[0] for p in positions)
+        gy = min(p[1] for p in positions)
+        gw = max(p[0] + p[2] for p in positions) - gx
+        gh = max(p[1] + p[3] for p in positions) - gy
+
+        # Single outer border + separators (skipped when border width is 0)
+        if self.image_border_width > 0:
+            self.c.setStrokeColorRGB(*self.image_border_color)
+            self.c.setLineWidth(self.image_border_width)
+            self.c.rect(gx - bp, gy - bp, gw + bp * 2, gh + bp * 2, stroke=1, fill=0)
+            for x1, y1, x2, y2 in sep_lines:
+                self.c.line(x1, y1, x2, y2)
+
+        # Draw each image (no individual borders)
+        for pil_img, (x, y, w, h) in zip(ordered, positions):
+            if pil_img is None:
+                continue
+            img_buf = pil_image_to_reportlab(pil_img)
+            self.c.drawImage(ImageReader(img_buf), x, y, w, h, preserveAspectRatio=True)
 
     def _draw_inline_image_story(self, story: Story, pil_img: Optional[Image.Image] = None):
         """Inline layout: QR, title, date, image, then text in a single flow."""

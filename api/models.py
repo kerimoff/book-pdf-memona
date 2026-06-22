@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 
 
@@ -146,9 +146,27 @@ class Story(BaseModel):
     body: str = Field(..., min_length=1)
     recorded_at: Optional[str] = None
     qr_target_url: str = Field(..., min_length=1)
-    image_url: Optional[str] = None
+    image_url: Optional[str] = None   # backwards-compat alias for image_urls[0]
+    image_urls: List[str] = Field(default_factory=list)
     contributor: Optional[str] = None
     relation: Optional[str] = None
+
+    @field_validator("image_urls")
+    @classmethod
+    def validate_image_urls(cls, v: List[str]) -> List[str]:
+        filtered = [url.strip() for url in v if url and url.strip()]
+        return filtered[:3]
+
+    @model_validator(mode="after")
+    def merge_image_fields(self) -> "Story":
+        # Merge image_url (old field) into image_urls
+        if self.image_url and self.image_url.strip() and self.image_url.strip() not in self.image_urls:
+            self.image_urls = [self.image_url.strip()] + self.image_urls
+        if len(self.image_urls) > 3:
+            self.image_urls = self.image_urls[:3]
+        # Keep image_url in sync with first entry for single-image backwards compat
+        self.image_url = self.image_urls[0] if self.image_urls else None
+        return self
 
     @field_validator("recorded_at")
     @classmethod
