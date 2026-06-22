@@ -76,7 +76,7 @@ def upload_to_supabase(file_bytes: bytes, storage_path: str, content_type: str =
 
 def verify_api_key(request: Request) -> bool:
     if not API_KEY:
-        return True
+        return False  # reject all requests when API_KEY is not configured
     provided_key = request.headers.get("x-api-key", "")
     if not provided_key:
         return False

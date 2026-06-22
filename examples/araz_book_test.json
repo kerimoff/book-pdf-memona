@@ -2,9 +2,9 @@
   "book": {
     "title": "Arazın ilk ili",
     "subtitle": "Ailənin xatirələri",
-    "author": "Simurq Bala",
+    "author": "Memona",
     "language": "az",
-    "brand": "simurq",
+    "brand": "Memona",
     "total_entries": 50
   },
   "style": {
@@ -49,7 +49,7 @@
     "body_text_color": "#2C1810"
   },
   "output": {
-    "file_name": "simurq-araz-ilk-il.pdf"
+    "file_name": "memona-araz-ilk-il.pdf"
   },
   "stories": [
     {
