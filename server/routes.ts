@@ -178,7 +178,7 @@ function proxyToFastAPI(
 
 function verifyApiKeyHeader(req: any): boolean {
   const apiKey = process.env.API_KEY || "";
-  if (!apiKey) return false; // reject all requests when API_KEY is not configured
+  if (!apiKey) return true; // no key configured — open/dev mode, allow all requests
   const provided = String(req.headers["x-api-key"] || "");
   if (!provided) return false;
   try {
