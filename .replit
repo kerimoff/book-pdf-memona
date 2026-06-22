@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["freetype", "glibcLocales", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "tcl", "tk", "zlib", "unzip"]
+packages = ["freetype", "glibcLocales", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "tcl", "tk", "unzip", "zlib"]
 
 [[ports]]
 localPort = 5000
@@ -53,3 +53,6 @@ waitForPort = 5000
 
 [objectStorage]
 defaultBucketID = "replit-objstore-0f5d5528-aed6-4ae5-b81b-0da93efe2c34"
+
+[agent]
+stack = "FULLSTACK_JS"
