@@ -437,14 +437,16 @@ export default function Home() {
                     <p className="font-medium text-sm">Authentication</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    All endpoints except <code className="bg-muted px-1 rounded text-xs">/health</code> require 
-                    an API key sent via the <code className="bg-muted px-1 rounded text-xs">X-API-Key</code> header.
+                    All endpoints except <code className="bg-muted px-1 rounded text-xs">/health</code> require
+                    a valid API key sent via the <code className="bg-muted px-1 rounded text-xs">X-API-Key</code> header.
+                    The server must have <code className="bg-muted px-1 rounded text-xs">API_KEY</code> configured in its environment —
+                    requests are rejected with <code className="bg-muted px-1 rounded text-xs">401</code> if the env var is missing or the provided key does not match.
                   </p>
                   <pre className="p-3 rounded-md bg-muted/50 text-xs font-mono">
 {`Header: X-API-Key: your-secret-key`}
                   </pre>
                   <p className="text-xs text-muted-foreground">
-                    Returns <code className="bg-muted px-1 rounded">401 Unauthorized</code> if the key is missing or invalid.
+                    Returns <code className="bg-muted px-1 rounded">401 Unauthorized</code> if the key is missing, invalid, or not configured server-side.
                   </p>
                 </div>
 
@@ -479,35 +481,87 @@ export default function Home() {
                     <pre className="p-3 rounded-md bg-muted/50 text-xs font-mono overflow-auto max-h-[300px]">
 {`{
   "book": {
-    "title": "string (required)",
+    "title": "string (required, max 500 chars)",
     "subtitle": "string (optional)",
     "author": "string (optional)",
-    "language": "string (default: 'az')",
-    "brand": "string (default: 'simurq')"
+    "language": "string (default: 'az', max 10 chars)",
+    "brand": "string (default: 'simurq', max 50 chars)"
   },
   "style": {
-    "page_size": "'8x10' (required)",
+    // Page size
+    "page_size": "'8x10' | '6x9' | 'A4' | 'A5' | 'B5' | 'letter' | 'custom' (default: 'B5')",
+    "custom_width_mm": "number 100–400 (required when page_size='custom')",
+    "custom_height_mm": "number 100–500 (required when page_size='custom')",
+
+    // Margins
     "margins_mm": {
-      "inside": 24, "outside": 20,
-      "top": 20, "bottom": 22
+      "inside": "number 5–50 (default: 24)",
+      "outside": "number 5–50 (default: 20)",
+      "top": "number 5–50 (default: 20)",
+      "bottom": "number 5–50 (default: 22)"
     },
-    "body_font_size": 11,
-    "title_font_size": 21,
-    "line_height": 1.55,
-    "show_page_numbers": true,
-    "divider_style": "simple-line | graduated-dots | ornamental-floral | line-with-heart | line-with-diamond | line-with-eyes | line-with-circles | ornamental-flat"
+
+    // Typography
+    "font_name": "'noto-serif' | 'libre-baskerville' | 'eb-garamond' | 'cormorant-garamond' | 'libertinus-serif' | 'taviraj' | 'crimson-pro' (default: 'libre-baskerville')",
+    "body_font_size": "number 6–24 (default: 11)",
+    "title_font_size": "number 12–48 (default: 21)",
+    "date_font_size": "number 6–24 (default: 10)",
+    "page_number_font_size": "number 6–24 (default: 9)",
+    "contributor_font_size": "number 6–24 (default: 11)",
+    "line_height": "number 1.0–3.0 (default: 1.55)",
+    "paragraph_spacing": "number 0–2.0 (default: 0.4)",
+
+    // Colors (6-digit hex)
+    "body_text_color": "hex color (default: '#000000')",
+    "date_color": "hex color (default: '#737373')",
+    "divider_color": "hex color (default: '#B3B3B3')",
+    "page_number_color": "hex color (default: '#666666')",
+    "contributor_color": "hex color (default: '#8C8C8C')",
+    "qr_color": "hex color (default: '#1A5C52')",
+    "logo_color": "hex color (default: '#184b52')",
+
+    // QR & logo
+    "qr_code_size": "number 20–200 mm (default: 60)",
+    "qr_logo_enabled": "boolean (default: true)",
+
+    // Story opener spacing (mm)
+    "qr_top_spacing": "number 0–100 (default: 10)",
+    "title_spacing": "number 0–100 (default: 35)",
+    "date_spacing": "number 0–100 (default: 10)",
+    "divider_spacing": "number 0–100 (default: 14)",
+    "story_top_spacing": "number 0–100 (default: 40)",
+    "contributor_spacing": "number 0–100 (default: 8)",
+
+    // Divider
+    "divider_style": "'simple-line' | 'graduated-dots' | 'ornamental-floral' | 'line-with-heart' | 'line-with-diamond' | 'line-with-eyes' | 'line-with-circles' | 'ornamental-flat' (default: 'simple-line')",
+    "divider_line_width": "number 0.1–5.0 (default: 0.5)",
+
+    // Image styling
+    "image_border_width": "number 0–5.0 (default: 0.5)",
+    "image_border_color": "hex color (default: '#BFBFBF')",
+    "image_border_padding": "number 0–20 mm (default: 4)",
+    "full_page_image_margin": "number 0–50 mm (default: 0)",
+
+    // Layout
+    "show_page_numbers": "boolean (default: true)",
+    "min_page_count": "integer 1–2000 (default: 200)",
+    "print_cut_margin": "number 0–30 mm (default: 0)",
+    "allow_reorder": "boolean — reorder stories to reduce filler pages (default: false)",
+    "allow_reorder_count": "integer ≥0 — lookahead depth, 0 = unlimited (default: 0)"
   },
   "stories": [
     {
-      "title": "string (required)",
+      "title": "string (required, max 1000 chars)",
       "body": "string (required)",
-      "recorded_at": "ISO datetime (required)",
+      "recorded_at": "ISO 8601 datetime (optional, e.g. '2024-06-15T14:30:00Z')",
       "qr_target_url": "URL string (required)",
-      "image_url": "URL string (optional)"
+      "image_urls": ["URL string", "URL string", "URL string"],
+      "contributor": "string (optional) — name shown below story",
+      "relation": "string (optional) — e.g. 'grandmother', shown with contributor"
     }
   ],
   "output": {
-    "file_name": "string ending in .pdf"
+    "file_name": "string ending in .pdf (default: 'simurq-book.pdf')"
   }
 }`}
                     </pre>
@@ -529,7 +583,11 @@ export default function Home() {
 
                   <div className="space-y-2">
                     <p className="text-xs font-medium">Error Codes</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                      <div className="p-2 rounded-md bg-muted/50">
+                        <Badge variant="destructive" className="text-xs">401</Badge>
+                        <p className="text-xs mt-1 text-muted-foreground">Missing or invalid API key</p>
+                      </div>
                       <div className="p-2 rounded-md bg-muted/50">
                         <Badge variant="destructive" className="text-xs">400</Badge>
                         <p className="text-xs mt-1 text-muted-foreground">Validation/business error</p>
