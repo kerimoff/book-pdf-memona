@@ -77,7 +77,9 @@ def upload_to_supabase(file_bytes: bytes, storage_path: str, content_type: str =
 def verify_api_key(request: Request) -> bool:
     if not API_KEY:
         return True  # no key configured — open/dev mode, allow all requests
-    provided_key = request.headers.get("x-api-key", "")
+    # Accept the key via header (API clients) or query param (browser download links,
+    # which cannot send custom headers).
+    provided_key = request.headers.get("x-api-key", "") or request.query_params.get("api_key", "")
     if not provided_key:
         return False
     return hmac.compare_digest(provided_key, API_KEY)
