@@ -1,4 +1,4 @@
-# Simurq Book PDF Generator
+# Memona Book PDF Generator
 
 Generate print-ready book interior PDFs with QR codes, multi-photo collages, and customisable typography.
 
@@ -38,7 +38,7 @@ Generates a PDF book and returns a download URL.
 | `subtitle` | string | No | `null` | Subtitle shown below the title on the title page. |
 | `author` | string | No | `null` | Author name shown on the title page. |
 | `language` | string | No | `"az"` | Language code (max 10 chars). Used for date formatting. |
-| `brand` | string | No | `"simurq"` | Brand identifier (max 50 chars). |
+| `brand` | string | No | `"memona"` | Brand identifier (max 50 chars). |
 
 ---
 
@@ -111,7 +111,7 @@ All fields have sensible defaults — you can omit the entire `style` object.
 | Field | Type | Default | Constraints | Description |
 |-------|------|---------|-------------|-------------|
 | `qr_color` | string | `"#1A5C52"` | 6-digit hex | QR code module colour. |
-| `logo_color` | string | `"#184b52"` | 6-digit hex | Colour of the Simurq logo inside the QR code and on the splash page. |
+| `logo_color` | string | `"#184b52"` | 6-digit hex | Colour of the Memona logo inside the QR code and on the splash page. |
 | `qr_logo_enabled` | boolean | `true` | — | Whether to embed the logo in the QR code centre. |
 | `qr_code_size` | number | `60` | 20–200 | QR code width/height (pt). |
 | `qr_top_spacing` | number | `10` | 0–100 | Gap between content area top and QR code (pt). |
@@ -214,7 +214,7 @@ Each image is drawn **fit** (full image visible, letterbox-free within its slot)
 
 | Field | Type | Default | Constraints | Description |
 |-------|------|---------|-------------|-------------|
-| `file_name` | string | `"simurq-book.pdf"` | Must end with `.pdf`, no path separators | Output PDF filename. |
+| `file_name` | string | `"memona-book.pdf"` | Must end with `.pdf`, no path separators | Output PDF filename. |
 
 ---
 
@@ -225,9 +225,9 @@ Each image is drawn **fit** (full image visible, letterbox-free within its slot)
 ```json
 {
   "status": "ok",
-  "file_name": "simurq-book.pdf",
-  "storage_path": "books/order-abc12345/interior/simurq-book.pdf",
-  "download_url": "http://localhost:3000/api/download/books/order-abc12345/interior/simurq-book.pdf",
+  "file_name": "memona-book.pdf",
+  "storage_path": "books/order-abc12345/interior/memona-book.pdf",
+  "download_url": "http://localhost:3000/api/download/books/order-abc12345/interior/memona-book.pdf",
   "page_count": 6,
   "story_count": 3
 }

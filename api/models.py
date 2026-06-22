@@ -9,7 +9,7 @@ class BookInfo(BaseModel):
     subtitle: Optional[str] = None
     author: Optional[str] = None
     language: str = Field(default="az", max_length=10)
-    brand: str = Field(default="simurq", max_length=50)
+    brand: str = Field(default="memona", max_length=50)
 
 
 class Margins(BaseModel):
@@ -195,7 +195,7 @@ class Story(BaseModel):
 
 
 class OutputConfig(BaseModel):
-    file_name: str = Field(default="simurq-book.pdf")
+    file_name: str = Field(default="memona-book.pdf")
 
     @field_validator("file_name")
     @classmethod

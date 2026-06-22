@@ -22,11 +22,11 @@ logging.basicConfig(
     format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
     datefmt="%H:%M:%S",
 )
-logger = logging.getLogger("simurq-api")
+logger = logging.getLogger("memona-api")
 
 app = FastAPI(
-    title="Simurq Book PDF Generator API",
-    description="Generate print-ready interior PDFs in Simurq style",
+    title="Memona Book PDF Generator API",
+    description="Generate print-ready interior PDFs in Memona style",
     version="1.0.0",
 )
 

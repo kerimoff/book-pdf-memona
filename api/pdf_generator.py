@@ -69,7 +69,7 @@ def register_fonts():
     FONTS_REGISTERED = True
 
 
-class SimurqPDFGenerator:
+class MemonaPDFGenerator:
     def __init__(self, request: BookRequest):
         self.request = request
         self.style = request.style
@@ -148,7 +148,7 @@ class SimurqPDFGenerator:
 
         self._new_page(count_as_logical=False)   # physical pg 1 — alone on right (cover slot)
         self._new_page(count_as_logical=False)   # physical pg 2 — blank endpaper, left of first spread
-        self._draw_simurq_splash_page()
+        self._draw_memona_splash_page()
         self._new_page(count_as_logical=True)    # blank leaf — logical page 2
         self._draw_title_page()
 
@@ -219,7 +219,7 @@ class SimurqPDFGenerator:
         self.c.drawCentredString(self.page_width / 2, self.margins["bottom"] / 2, num_str)
         self.c.setFillColorRGB(0, 0, 0)
 
-    def _draw_simurq_splash_page(self):
+    def _draw_memona_splash_page(self):
         self._new_page(count_as_logical=True)
 
         if os.path.exists(self._word_logo_path):
@@ -1111,5 +1111,5 @@ class SimurqPDFGenerator:
 
 
 def generate_pdf(request: BookRequest) -> tuple[bytes, int]:
-    generator = SimurqPDFGenerator(request)
+    generator = MemonaPDFGenerator(request)
     return generator.generate()

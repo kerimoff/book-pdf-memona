@@ -172,7 +172,7 @@ export default function Home() {
             </div>
             <div>
               <h1 className="text-lg font-semibold tracking-tight" data-testid="text-app-title">
-                Simurq Book PDF Generator
+                Memona Book PDF Generator
               </h1>
               <p className="text-xs text-muted-foreground">REST API for print-ready book interiors</p>
             </div>
@@ -485,7 +485,7 @@ export default function Home() {
     "subtitle": "string (optional)",
     "author": "string (optional)",
     "language": "string (default: 'az', max 10 chars)",
-    "brand": "string (default: 'simurq', max 50 chars)"
+    "brand": "string (default: 'memona', max 50 chars)"
   },
   "style": {
     // Page size
@@ -561,7 +561,7 @@ export default function Home() {
     }
   ],
   "output": {
-    "file_name": "string ending in .pdf (default: 'simurq-book.pdf')"
+    "file_name": "string ending in .pdf (default: 'memona-book.pdf')"
   }
 }`}
                     </pre>
@@ -572,8 +572,8 @@ export default function Home() {
                     <pre className="p-3 rounded-md bg-muted/50 text-xs font-mono">
 {`{
   "status": "ok",
-  "file_name": "simurq-book.pdf",
-  "storage_path": "books/order-xxx/interior/simurq-book.pdf",
+  "file_name": "memona-book.pdf",
+  "storage_path": "books/order-xxx/interior/memona-book.pdf",
   "download_url": "https://.../api/download/books/...",
   "page_count": 12,
   "story_count": 3
@@ -726,7 +726,7 @@ export default function Home() {
 
         <footer className="pt-8 pb-4 border-t text-center">
           <p className="text-xs text-muted-foreground">
-            Simurq Book PDF Generator API v1.0.0
+            Memona Book PDF Generator API v1.0.0
           </p>
         </footer>
       </main>

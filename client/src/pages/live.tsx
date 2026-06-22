@@ -98,9 +98,9 @@ const INITIAL_STATE: LiveState = {
   book: {
     title: "Xatirə Kitabı",
     subtitle: "Ailə hekayələri",
-    author: "Simurq",
+    author: "Memona",
     language: "az",
-    brand: "simurq",
+    brand: "memona",
   },
   style: {
     page_size: "B5",
@@ -135,31 +135,31 @@ const INITIAL_STATE: LiveState = {
       title: "Nənəmin çörək təndiri",
       body: "Nənəmin həyətində bir təndir var idi — torpaqdan tikilmiş, böyürləri illərin istisindən qapqara olmuş. O təndir evin ürəyi idi. Çörək qoxusu küçəyə çıxanda qonşular bilirdi ki, cümə günüdür.\nHər cümə nənəm səhər tezdən qalxıb xəmiri yoğurardı. Böyük mis ləyəndə un, su, maya, bir çimdik duz. Əlləri qoca idi, barmaqları əyilmişdi, amma xəmiri elə yoğururdu ki, sanki rəqs edirdi. Mən kiçik idim, yanında oturub baxardım. Bəzən xəmir parçası qopardıb mənə verirdi: \"Al, sən də yoğur.\" Mənimki həmişə əlimə yapışardı. Nənəm gülürdü: \"Tələsmə, xəmir səni tanımalıdır.\"\nXəmir hazır olanda nənəm onu örtüb saxlayardı — deyirdi ki, xəmir yatmalıdır, nəfəs almalıdır. Sonra təndir zamanı gəlirdi. Od yandırırdı, alov divarları yalayırdı. Nənəm xəmiri nazik yayıb təndirin divarına yapışdırardı. O yapışma səsi — tap, tap, tap — indi də qulağımdadır.\nÇörəyin qızarma qoxusu bütün həyəti bürüyürdü. Qonşunun ağ pişiyi gəlib qapıda oturardı. Nənəm deyirdi: \"Bax, Ağbəniz də gəldi.\"\nTəndirdən çıxan ilk çörəyi həmişə qonşu Xədicə xalaya göndərirdi. \"Bərəkət paylaşmaqla gəlir\" — hər cümə eyni sözü deyirdi. Xədicə xala da cavab göndərirdi — bəzən pendir, bəzən üzüm.\nNənəm səksən yeddi yaşında vəfat etdi. Həyəti satdılar, təndir söküldü. Amma mən hər cümə, haradasa çörək qoxusu alanda nənəmin həyətinə qayıdıram. Əlləri unlu, üzündə sakit təbəssüm: \"Tələsmə, bala.\"",
       recorded_at: "2026-01-12T09:15:00.000Z",
-      qr_target_url: "https://simurq.app/blog",
+      qr_target_url: "https://memona.app/blog",
     },
     {
       title: "Babamın dənizi ilk dəfə görməsi",
       body: "Babam Lənkəranda böyümüşdü — dağların ətəyində, çayların arasında, amma dənizdən uzaqda. Dənizi ilk dəfə on dörd yaşında görmüşdü. Bu hekayəni hər danışanda sanki yenidən yaşayırdı — gözləri böyüyürdü, səsi dəyişirdi, əlləri ilə dalğaları göstərirdi.\nDeyirdi ki, əmisi Rəhim onu Bakıya aparmışdı. Yük maşınının arxasında getmişdilər, brezent örtüyün altında, yanlarında alma yeşikləri. Yol çox uzun idi — indi maşınla dörd-beş saat deyirlər, amma o vaxt bütün gecə çəkmişdi. Yollar çuxur idi, maşın silkələnirdi, amma babam gözünü qırpmamışdı. Yatmaq ağlına belə gəlmirdi.\n\"Rəhim əmi, dəniz nə rəngdədir?\" — soruşmuşdu yolda. Əmisi gülmüşdü: \"Özün görərsən.\" Babam deyirdi ki, göy rəng təsəvvür edirdi, kitablardakı şəkillərdən. Amma gördüyü tamam başqa idi.\nSəhər tezdən Bakıya çatdılar. Əmisi onu birbaşa Bulvara apardı. Meydandan keçdilər, ağacların arasından çıxdılar, və birdən — dəniz.\nBabam həmişə bu cümləni eyni cür deyirdi: \"Mən bilmirdim ki, su bu qədər böyük ola bilər.\" Yerindəcə dayanmışdı, ağzı açıq. Əmisi arxadan gəlib çiyninə vurmuşdu: \"Nə oldu, qorxdun?\" Babam qorxmamışdı. Sözü gəlmirdi, vəssalam. Dil tutulmuşdu.\nDalğaların səsini eşidirdi — şırıltı, sonra geri çəkilmə, yenə şırıltı. Külək üzünə dəyirdi, dodaqlarında duz dadı hiss etdi. Quşlar havada fırlanırdı, ağ idi, qışqırırdılar. Hər şey yeni idi — səs, dad, qoxu, mənzərə. Beş duyğunun hamısı eyni anda partladı.\nSuya yaxınlaşdı, ayaqqabılarını çıxartdı. Ayağını saldı — soyuq idi, gözlədiyindən soyuq. Amma xoş idi. Dalğa gəldi, ayağını çəkib apardı, babam geri qaçdı. Sonra yenə irəli getdi. Dalğa yenə gəldi, yenə qaçdı. Bu oyunu saatlarla oynamışdı — dalğa ilə qaçış.\nƏmisi sahildə oturub papiros çəkirdi, baxıb gülürdü. \"Səni qoyub gedəcəm, sən çıxmayacaqsan suda\" — zarafat edirdi.\nAxşam əmisi ona dondurma aldı. Bulvarın girəcəyindəki arabadan — vanilli dondurma, vafli qıfda. Babam deyirdi ki, o günə qədər heç vaxt dondurma yeməmişdi. Birinci dişləmi heç vaxt unutmadı. \"Həyatımda yediyim ən dadlı şey\" — belə deyirdi. Biz gülürdük, çünki bilirdik ki, dondurmadan daha dadlı şeylər var. Amma o gün hər şeyin dadı fərqli idi, çünki hər şey ilk dəfə idi.\nBabam sonralar Bakıda yaşadı. Otuz il hər gün dənizi gördü, hər gün Bulvardan keçdi. Amma o ilk günün heyrəti heç vaxt getmədi. Deyirdi ki, insan bir şeyi ilk dəfə görəndə qəlbi başqa cür döyünür. Və o döyüntünü təkrarlamaq mümkün deyil — nə ikinci dəfə, nə üçüncü dəfə.\nBabam üç il əvvəl vəfat etdi. Ondan bir neçə həftə əvvəl birlikdə Bulvara getdik. Əlini tutub sahilə endirdim. O, əyilib əlini suya saldı — eynilə o on dörd yaşlı oğlan kimi. Barmaqlarını suda gəzdirdi, gözlərini yumdu.\n\"Hələ soyuqdur\" — dedi, sakit-sakit gülümsədi.\nBu, onun dənizlə son söhbəti idi.",
       recorded_at: "2026-02-20T14:00:00.000Z",
-      qr_target_url: "https://simurq.app/blog",
+      qr_target_url: "https://memona.app/blog",
       image_urls: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80"],
     },
     {
       title: "Atamın saatı",
       body: "Atamın bir cib saatı var idi. Gümüşü, köhnə, arxasında cızıqlar. Onu öz atasından almışdı, o da öz atasından. Üç nəslin saatı idi — üç kişinin cibindən keçmişdi, üç ömür görmüşdü.\nAtam hər səhər onu cibinə qoyurdu, hər axşam stolun üstünə. Saatın tıqqıltısı gecələr eşidilirdi — tıq-tıq-tıq — sanki evin ürəyi döyünürdü. Mən yatağımda o səslə yuxuya gedirdim. O səs yox olanda — atam səfərdə olanda — yata bilmirdim.\nBir dəfə soruşdum: \"Ata, bu saat düz gedir?\" Güldü: \"Beş dəqiqə geri qalır. Amma mən bunu bilirəm, ona görə əlli ildir heç vaxt gecikməmişəm. Əsas saat deyil, saatı tanımaqdır.\"\nSaatın şüşəsi bir dəfə çatlamışdı — atam düşürmüşdü. Bakıda bir usta tapdı, düzəltdirdi. Usta demişdi ki, saat qiymətlidir, çox köhnədir. Atam gülmüşdü: \"Qiymətini mən bilirəm, usta.\"\nAtam öləndə saatı mənə qaldı. Cibimə qoydum — isti idi hələ, sanki atamın istiliyi qalmışdı. İndi mənim cibimdir. Hələ beş dəqiqə geri qalır. Mən də əlli ildir heç vaxt gecikməmişəm.\nBir gün oğluma verəcəm. Dördüncü nəsil. Deyəcəm ki, beş dəqiqə geri qalır, amma saat yalan demir. Tanısan, kifayətdir.",
       recorded_at: "2025-07-18T11:00:00.000Z",
-      qr_target_url: "https://simurq.app/blog",
+      qr_target_url: "https://memona.app/blog",
       image_urls: ["https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=800&q=80"],
     },
     {
       title: "Toyumuzun gecəsi",
       body: "Toyumuz iyunun on yeddisi idi, min doqquz yüz səksən altı. Hava otuz beş dərəcə idi. Atam deyirdi ki, isti hava uğur gətirir. Anam deyirdi ki, atam hər şeydən uğur düzəltməyi bacarır.\nƏynimə yeni kostyum geymişdim — tünd göy, atam Bakıdan almışdı. Boyunbağımı düzəldə bilmirdim, əllərim titrəyirdi. Əmim gəlib düzəltdi: \"Qorxma, qaçmayacaq.\"\nHəyətdə süfrələr qurulmuşdu. Plov üç qazanda bişmişdi. Qonşu qadınlar kömək edirdi — dolma bükən, şəkərbura yoğuran, çay dəmləyən. Mətbəx xaos idi, amma gözəl xaos.\nUzaqdan zurna gəldi, baraban qoşuldu. Uşaqlar qaçdı: \"Gəlir!\" Fatimə maşından düşdü — ağ paltarda, ağ tülbənd. Gözləri tülbəndin altından parlayırdı. Əlləri titrəyirdi. Mənimkilər də.\nMərasim qısa oldu. Süfrə uzun. Gecə yarısı əmim lezginkanı elə oynayırdı ki, torpaq titrəyirdi. Kiçik bacım böyüklərin arasında fırlanırdı. Atam anamın əlindən tutub rəqs etdi — otuz il evli idilər, hələ utanırdılar.\nAmma ən yaxşı anı toyun sonunda idi. Qonaqlar dağıldı, musiqiçilər getdi. Biz ikimiz həyətdə tək qaldıq. Ulduzlar çox idi. Fatimə tülbəndini çıxartdı.\n\"Qorxdum ki, gəlməzsən\" — dedi.\n\"Hardaydım ki, gəlməyim? Bütün gün bu həyətdə oturmuşam.\"\nGüldü. Sakit, yorğun, xoşbəxt.\nQırx ildir Fatiməyləyik. Amma o gecəni — o sakit, ulduzlu gecəni — heç vaxt unutmadım.",
       recorded_at: "2026-03-01T11:45:00.000Z",
-      qr_target_url: "https://simurq.app/blog",
+      qr_target_url: "https://memona.app/blog",
     },
   ],
   output: {
-    file_name: "simurq-book-update.pdf",
+    file_name: "memona-book-update.pdf",
   },
 };
 
@@ -369,7 +369,7 @@ export default function Live() {
             title: "New Story",
             body: "Story text here...",
             recorded_at: new Date().toISOString(),
-            qr_target_url: "https://simurq.app/blog",
+            qr_target_url: "https://memona.app/blog",
           },
         ],
       })),

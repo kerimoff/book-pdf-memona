@@ -11,3 +11,4 @@ storage/
 .venv
 outputs/*
 .env.claude/worktrees/
+.env

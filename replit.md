@@ -1,7 +1,7 @@
-# Simurq Book PDF Generator API
+# Memona Book PDF Generator API
 
 ## Overview
-A production-ready REST API that accepts structured JSON, generates print-ready PDFs in Simurq (Remento-like) interior style, stores files locally, and returns downloadable file links.
+A production-ready REST API that accepts structured JSON, generates print-ready PDFs in Memona (Remento-like) interior style, stores files locally, and returns downloadable file links.
 
 ## Architecture
 - **Frontend**: React + Vite (API documentation and testing playground)
