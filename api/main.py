@@ -42,7 +42,7 @@ STORAGE_BASE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fi
 API_KEY = os.environ.get("API_KEY", "")
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_SECRET_KEY = os.environ.get("SUPABASE_SECRET_KEY", "")
-SUPABASE_BUCKET = "temp_pdf"
+SUPABASE_BUCKET = "book-pdfs"
 
 
 def upload_to_supabase(file_bytes: bytes, storage_path: str, content_type: str = "application/pdf") -> str | None:
