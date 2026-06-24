@@ -10,7 +10,8 @@
     "image_border_width": 0,
     "image_border_padding": 0,
     "min_page_count": 30,
-    "story_top_spacing": 20
+    "story_top_spacing": 20,
+    "collage_image_gap": 4
   },
   "stories": [
     {

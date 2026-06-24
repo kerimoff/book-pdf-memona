@@ -90,6 +90,7 @@ class StyleConfig(BaseModel):
     image_border_width: float = Field(default=0.5, ge=0, le=5.0)
     image_border_color: str = Field(default="#BFBFBF")
     image_border_padding: float = Field(default=4, ge=0, le=20)
+    collage_image_gap: float = Field(default=1.0, ge=0, le=50)  # points — gap/divider between photos in a multi-photo collage
     full_page_image_margin: float = Field(default=0, ge=0, le=50)
 
     # Colors

@@ -34,7 +34,6 @@ from api.utils import (
 logger = logging.getLogger(__name__)
 
 FONTS_REGISTERED = False
-COLLAGE_GUTTER = 4 * mm  # gap between photos in a multi-photo collage
 
 
 def register_fonts():
@@ -120,6 +119,7 @@ class MemonaPDFGenerator:
         self.image_border_width = self.style.image_border_width
         self.image_border_color = hex_to_rgb_floats(self.style.image_border_color)
         self.image_border_padding = self.style.image_border_padding
+        self.collage_image_gap = self.style.collage_image_gap
 
         # Colors (hex → RGB 0-1 tuples)
         self.date_color = hex_to_rgb_floats(self.style.date_color)
@@ -533,7 +533,7 @@ class MemonaPDFGenerator:
         For 2-hstack / 2-vstack images are sized adaptively (no letterbox within the group).
         For 3-slot templates images are fit-within-slot with letterbox, but share one border.
         """
-        SEP = 1.0  # points — thin gap / divider line between images
+        SEP = self.collage_image_gap  # points — gap / divider line between images (style.collage_image_gap)
 
         def ratio(img):
             return img.size[0] / img.size[1]
