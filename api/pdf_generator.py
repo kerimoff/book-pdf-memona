@@ -765,15 +765,16 @@ class MemonaPDFGenerator:
             y = y_cursor - draw_h - self.image_border_padding
 
             # Draw border
-            self.c.setStrokeColorRGB(*self.image_border_color)
-            self.c.setLineWidth(self.image_border_width)
-            self.c.rect(
-                x - self.image_border_padding,
-                y - self.image_border_padding,
-                draw_w + self.image_border_padding * 2,
-                draw_h + self.image_border_padding * 2,
-                stroke=1, fill=0
-            )
+            if self.image_border_width > 0:
+                self.c.setStrokeColorRGB(*self.image_border_color)
+                self.c.setLineWidth(self.image_border_width)
+                self.c.rect(
+                    x - self.image_border_padding,
+                    y - self.image_border_padding,
+                    draw_w + self.image_border_padding * 2,
+                    draw_h + self.image_border_padding * 2,
+                    stroke=1, fill=0
+                )
 
             # Draw image
             img_buf = pil_image_to_reportlab(pil_img)
@@ -946,15 +947,16 @@ class MemonaPDFGenerator:
             x, y, draw_w, draw_h = get_full_page_image_rect(
                 img_w, img_h, self.page_width, self.page_height, effective_margin,
             )
-            self.c.setStrokeColorRGB(*self.image_border_color)
-            self.c.setLineWidth(self.image_border_width)
-            self.c.rect(
-                x - self.image_border_padding,
-                y - self.image_border_padding,
-                draw_w + self.image_border_padding * 2,
-                draw_h + self.image_border_padding * 2,
-                stroke=1, fill=0,
-            )
+            if self.image_border_width > 0:
+                self.c.setStrokeColorRGB(*self.image_border_color)
+                self.c.setLineWidth(self.image_border_width)
+                self.c.rect(
+                    x - self.image_border_padding,
+                    y - self.image_border_padding,
+                    draw_w + self.image_border_padding * 2,
+                    draw_h + self.image_border_padding * 2,
+                    stroke=1, fill=0,
+                )
             self.c.drawImage(img_reader, x, y, draw_w, draw_h, preserveAspectRatio=True)
             return
 
@@ -968,15 +970,16 @@ class MemonaPDFGenerator:
         x = box["left"] + (box["width"] - draw_w) / 2
         y = box["bottom"] + (box["height"] - draw_h) / 2
 
-        self.c.setStrokeColorRGB(*self.image_border_color)
-        self.c.setLineWidth(self.image_border_width)
-        self.c.rect(
-            x - self.image_border_padding,
-            y - self.image_border_padding,
-            draw_w + self.image_border_padding * 2,
-            draw_h + self.image_border_padding * 2,
-            stroke=1, fill=0
-        )
+        if self.image_border_width > 0:
+            self.c.setStrokeColorRGB(*self.image_border_color)
+            self.c.setLineWidth(self.image_border_width)
+            self.c.rect(
+                x - self.image_border_padding,
+                y - self.image_border_padding,
+                draw_w + self.image_border_padding * 2,
+                draw_h + self.image_border_padding * 2,
+                stroke=1, fill=0
+            )
 
         self.c.drawImage(img_reader, x, y, draw_w, draw_h, preserveAspectRatio=True)
 
