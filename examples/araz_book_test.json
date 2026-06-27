@@ -32,7 +32,7 @@
     "allow_reorder": true,
     "allow_reorder_count": 3,
     "print_cut_margin": 0,
-    "full_page_image_margin": 5,
+    "full_page_image_margin": 10,
     "inline_photos_enabled": false,
     "title_spacing": 24,
     "date_spacing": 10,

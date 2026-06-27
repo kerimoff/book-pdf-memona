@@ -198,6 +198,7 @@ class MemonaPDFGenerator:
     def _new_page(self, count_as_logical: bool = True):
         if self.page_num > 0:
             self.c.showPage()
+        self._photo_page = False
         self.page_num += 1
         if count_as_logical:
             self.logical_page_num += 1
@@ -209,8 +210,35 @@ class MemonaPDFGenerator:
     def _get_content_box(self):
         return get_content_box(self.page_num, self.margins, self.page_width, self.page_height)
 
+    def _get_collage_box(self):
+        """Content box for photo-only (collage) pages.
+
+        full_page_image_margin sets the top/bottom gap so the collage can extend
+        closer to the page edges than text. Horizontally the box still respects
+        the inside (binding/gutter) and outside margins, picked by page parity."""
+        m = self.full_page_image_margin
+        is_right_page = self.page_num % 2 == 1
+        if is_right_page:
+            left = self.margins["inside"]
+            right = self.page_width - self.margins["outside"]
+        else:
+            left = self.margins["outside"]
+            right = self.page_width - self.margins["inside"]
+        top = self.page_height - m
+        bottom = m
+        return {
+            "left": left,
+            "right": right,
+            "top": top,
+            "bottom": bottom,
+            "width": right - left,
+            "height": top - bottom,
+        }
+
     def _draw_page_number(self):
         if not self.style.show_page_numbers:
+            return
+        if getattr(self, "_photo_page", False):
             return
         if self.logical_page_num <= 0:
             return
@@ -727,8 +755,12 @@ class MemonaPDFGenerator:
         One shared border around the entire group; thin separator lines between images."""
         if not images:
             return
+        self._photo_page = True  # suppress page number on photo-only pages
         template, ordered = self._plan_collage(images)
-        box = self._get_content_box()
+        # A photo-only collage page uses full_page_image_margin as the minimum
+        # gap from every page edge (like a single full-page image), instead of
+        # the regular text content margins.
+        box = self._get_collage_box()
         bp = self.image_border_padding
 
         positions, sep_lines = self._compute_collage_layout(
