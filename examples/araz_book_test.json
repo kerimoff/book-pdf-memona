@@ -32,7 +32,8 @@
     "allow_reorder": true,
     "allow_reorder_count": 3,
     "print_cut_margin": 0,
-    "full_page_image_margin": 15,
+    "full_page_image_margin": 10,
+    "inline_photos_enabled": false,
     "title_spacing": 24,
     "date_spacing": 10,
     "divider_spacing": 14,
@@ -46,7 +47,7 @@
     "page_number_color": "#666666",
     "contributor_color": "#8B4040",
     "body_text_color": "#2C1810",
-    "collage_image_gap": 4
+    "collage_image_gap": 8
   },
   "output": {
     "file_name": "memona-araz-ilk-il.pdf"
@@ -56,7 +57,7 @@
       "title": "Doğulduğun gün",
       "contributor": "Ata",
       "recorded_at": "2025-04-30",
-      "qr_target_url": "https://memona.app/",
+      "qr_target_url": "https://memona.app/listen/Jd96VOGRQB_4HNCChWk-SBUzbA74GCEN",
       "image_urls": [
         "https://rwlfucadgvmgglxkdnxn.supabase.co/storage/v1/object/public/temp/araz_example_photos/IMG_1060.JPG",
         "https://rwlfucadgvmgglxkdnxn.supabase.co/storage/v1/object/public/temp/araz_example_photos/IMG_1081.jpeg",
@@ -68,7 +69,7 @@
       "title": "Bacım deyil, qardaşım",
       "contributor": "Bilgə",
       "recorded_at": "2025-05-02T10:00:00.000Z",
-      "qr_target_url": "https://memona.app/",
+      "qr_target_url": "https://memona.app/listen/rbU-h2MRbbc8FMH8Za2SbPjUYBIvoqeS",
       "image_urls": [
         "https://rwlfucadgvmgglxkdnxn.supabase.co/storage/v1/object/public/temp/araz_example_photos/IMG_1221%202.jpeg",
         "https://rwlfucadgvmgglxkdnxn.supabase.co/storage/v1/object/public/temp/araz_example_photos/IMG_1257.jpeg",

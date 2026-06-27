@@ -282,12 +282,13 @@ class MemonaPDFGenerator:
         else:
             is_landscape = False
 
-        if is_landscape:
+        if is_landscape and self.style.inline_photos_enabled:
             # Landscape: always inline regardless of page parity
             self._draw_inline_image_story(story, pil_img)
             return
 
-        # Portrait: image must land on left (even) page
+        # Portrait (or landscape with inline photos disabled): image must land
+        # on left (even) page, on its own page rather than inline with the QR.
         would_create_blank = self.page_num % 2 == 0
         if would_create_blank:
             if self._is_long_text(story):
@@ -352,9 +353,12 @@ class MemonaPDFGenerator:
         # Exactly 1 landscape + at least 1 other: landscape goes inline on the
         # text page (mirrors the existing single-landscape inline behaviour);
         # the remaining portrait/square images form a collage on the left page.
-        if len(landscape) == 1 and len(others) >= 1:
+        if len(landscape) == 1 and len(others) >= 1 and self.style.inline_photos_enabled:
             self._draw_landscape_inline_with_collage(story, landscape[0], others)
             return
+
+        # When inline photos are disabled, the landscape image is treated like
+        # any other photo and joins the collage/own-page layouts below.
 
         # 3 photos with long text → split [photo 1] / [photos 2+3]
         if len(images) == 3 and self._is_long_text(story):

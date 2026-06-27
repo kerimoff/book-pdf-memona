@@ -84,6 +84,7 @@ interface LiveState {
     image_border_width: number;
     image_border_color: string;
     image_border_padding: number;
+    inline_photos_enabled: boolean;
     date_color: string;
     divider_color: string;
     page_number_color: string;
@@ -126,6 +127,7 @@ const INITIAL_STATE: LiveState = {
     image_border_width: 0.5,
     image_border_color: "#BFBFBF",
     image_border_padding: 4,
+    inline_photos_enabled: true,
     date_color: "#737373",
     divider_color: "#B3B3B3",
     page_number_color: "#666666",
@@ -909,6 +911,15 @@ export default function Live() {
                       max={20}
                       step={1}
                     />
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs">Inline Photos Enabled</Label>
+                      <Switch
+                        checked={state.style.inline_photos_enabled}
+                        onCheckedChange={(v) =>
+                          updateStyle("inline_photos_enabled", v)
+                        }
+                      />
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
 
