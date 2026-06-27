@@ -821,7 +821,7 @@ class MemonaPDFGenerator:
             + self.title_font_size * 1.3 * num_title_lines
             + (self.contributor_spacing + self.contributor_font_size * 1.3 if story.contributor else 0)
             + (self.contributor_font_size * 1.1 if story.contributor and story.relation else 0)
-            + (self.date_spacing + self.date_font_size * 1.3 if story.recorded_at else 0)
+            + (self.date_spacing + self.date_font_size * 1.3 if story.recorded_at and not story.contributor else 0)
             + self.divider_spacing
             + self.story_top_spacing
         )
@@ -1027,14 +1027,16 @@ class MemonaPDFGenerator:
             self.c.setFont(self.font_serif_italic, self.contributor_font_size)
             self.c.setFillColorRGB(*self.contributor_color)
             y -= self.contributor_font_size * 1.3
-            self.c.drawCentredString(center_x, y, story.contributor)
+            contributor_line = story.contributor
+            if story.recorded_at:
+                contributor_line += " ⋅ " + format_date_az(story.recorded_at)
+            self.c.drawCentredString(center_x, y, contributor_line)
             if story.relation:
                 y -= self.contributor_font_size * 1.1
                 self.c.setFont(self.font_serif_italic, self.contributor_font_size - 1)
                 self.c.drawCentredString(center_x, y, story.relation)
             self.c.setFillColorRGB(*self.body_text_color)
-
-        if story.recorded_at:
+        elif story.recorded_at:
             y -= self.date_spacing
 
             formatted_date = format_date_az(story.recorded_at)
