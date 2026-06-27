@@ -84,6 +84,7 @@ interface LiveState {
     image_border_width: number;
     image_border_color: string;
     image_border_padding: number;
+    image_corner_radius: number;
     inline_photos_enabled: boolean;
     date_color: string;
     divider_color: string;
@@ -127,6 +128,7 @@ const INITIAL_STATE: LiveState = {
     image_border_width: 0.5,
     image_border_color: "#BFBFBF",
     image_border_padding: 4,
+    image_corner_radius: 0,
     inline_photos_enabled: true,
     date_color: "#737373",
     divider_color: "#B3B3B3",
@@ -909,6 +911,14 @@ export default function Live() {
                       onChange={(v) => updateStyle("image_border_padding", v)}
                       min={0}
                       max={20}
+                      step={1}
+                    />
+                    <SliderWithInput
+                      label="Corner Radius (pt)"
+                      value={state.style.image_corner_radius}
+                      onChange={(v) => updateStyle("image_corner_radius", v)}
+                      min={0}
+                      max={40}
                       step={1}
                     />
                     <div className="flex items-center justify-between">

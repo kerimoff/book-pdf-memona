@@ -540,6 +540,7 @@ export default function Home() {
     "image_border_width": "number 0–5.0 (default: 0.5)",
     "image_border_color": "hex color (default: '#BFBFBF')",
     "image_border_padding": "number 0–20 mm (default: 4)",
+    "image_corner_radius": "number 0–40 pt (default: 0) — rounded photo corners; 0 = square",
     "inline_photos_enabled": "boolean (default: true) — when false, landscape photos go to their own page/collage instead of inline on the QR/text page",
     "full_page_image_margin": "number 0–50 mm (default: 0)",
 
